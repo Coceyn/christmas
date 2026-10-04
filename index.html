@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3d2b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christmas">
+<title>Christmas Planner</title>
+<style>
+:root{
+  --pine:#1f3d2b; --pine-2:#2b5239; --pine-soft:#dfe9df; --berry:#a8262f; --berry-2:#c43a43; --berry-soft:#f6dcdc;
+  --gold:#c9973a; --gold-soft:#f3e6c6; --paper:#fbf5ea; --card:#fffdf8; --ink:#2a2420; --muted:#7d7166; --line:#eadfcd;
+  --shadow:0 2px 0 rgba(42,36,32,.04),0 10px 24px rgba(31,61,43,.10); --r:20px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#13241a; --card:#1b3123; --ink:#f6efe2; --muted:#b9ad98; --line:#2d4a37; --pine-soft:#24402e; --berry-soft:#3d1f22; --gold-soft:#3a3120; --shadow:none; --left:#8fd6a3; } }
+:root[data-theme="dark"]{ --paper:#13241a; --card:#1b3123; --ink:#f6efe2; --muted:#b9ad98; --line:#2d4a37; --pine-soft:#24402e; --berry-soft:#3d1f22; --gold-soft:#3a3120; --shadow:none; --left:#8fd6a3; }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;height:48px;text-align:left}
+html,body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 20% 10%,rgba(201,151,58,.08) 0 2px,transparent 3px),radial-gradient(circle at 80% 40%,rgba(168,38,47,.06) 0 2px,transparent 3px);background-size:90px 90px,130px 130px}
+button,input,select{font:inherit;color:inherit}
+/* top banner */
+.banner{position:relative;background:linear-gradient(180deg,var(--pine) 0%,var(--pine-2) 100%);color:#fff7e8;padding:max(14px,env(safe-area-inset-top)) 18px 26px;overflow:hidden;border-radius:0 0 28px 28px;box-shadow:0 8px 20px rgba(31,61,43,.25)}
+.lights{position:absolute;left:0;right:0;top:max(0px,env(safe-area-inset-top));height:34px;pointer-events:none}
+.banner .in{max-width:480px;margin:0 auto;position:relative;padding-top:22px}
+.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.banner h1{font-family:var(--serif);font-weight:700;font-size:30px;margin:4px 0 0;letter-spacing:.005em}
+.banner .sub{color:#e9dcc3;font-size:15px;margin-top:2px}
+.snow{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.banner .snow{opacity:.45;z-index:0}.banner .in{z-index:1}
+.snow i{position:absolute;top:-10px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.75);animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(240px) translateX(20px)}}
+.app{max-width:480px;margin:0 auto;padding:16px 16px calc(100px + env(safe-area-inset-bottom))}
+h2{font-family:var(--serif);font-size:21px;margin:0 0 10px;font-weight:700;display:flex;align-items:center;gap:8px}
+h2 .orn{color:var(--gold);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative}
+.card.ribbon::before{content:"";position:absolute;left:22px;top:-1px;width:14px;height:22px;background:var(--berry);clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%)}
+.count{display:flex;align-items:center;gap:18px}
+.bauble{flex:none;width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e0545c 0%,var(--berry) 45%,#6f141b 100%);color:#fff;display:grid;place-items:center;text-align:center;box-shadow:inset -6px -10px 18px rgba(0,0,0,.25),0 8px 18px rgba(168,38,47,.35);position:relative;margin-top:12px}
+.bauble::before{content:"";position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:26px;height:14px;border-radius:4px;background:linear-gradient(var(--gold),#a5772a)}
+.bauble::after{content:"";position:absolute;top:-24px;left:50%;width:14px;height:14px;border:2px solid var(--gold);border-radius:50%;transform:translateX(-50%)}
+.bauble b{display:block;font-family:var(--serif);font-size:44px;line-height:1}
+.bauble span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.count .txt{font-family:var(--serif);font-size:20px;line-height:1.3}
+.count .txt small{display:block;font-family:inherit;color:var(--muted);font-size:14px;margin-top:4px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.money{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.money div{background:var(--paper);border:1px dashed var(--line);border-radius:14px;padding:10px;text-align:center}
+.money .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.money .v{font-family:var(--serif);font-size:20px;font-weight:700}
+.money .v.left{color:var(--left,var(--pine-2))} .money .v.over{color:var(--berry)}
+.candy{height:12px;border-radius:99px;background:var(--pine-soft);overflow:hidden;margin:14px 0 4px}
+.candy > i{display:block;height:100%;border-radius:99px;background:repeating-linear-gradient(45deg,var(--berry) 0 10px,#fff 10px 16px)}
+.candy.over > i{background:var(--berry)}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.list li:first-child{border-top:0}
+.grow{flex:1;min-width:0}
+.t{font-weight:650;overflow:hidden;text-overflow:ellipsis}
+.s{font-size:13px;color:var(--muted)}
+.amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:16px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;min-height:54px}
+.btn.primary{background:var(--berry);color:#fff;box-shadow:0 4px 0 #6f141b}
+.btn.primary:active{transform:translateY(2px);box-shadow:0 2px 0 #6f141b}
+.btn.green{background:var(--pine);color:#fff7e8;box-shadow:0 4px 0 #11251a}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);font-size:16px;min-height:48px;padding:12px}
+.mini{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:7px 12px;font-size:14px;font-weight:700;cursor:pointer;min-height:40px;white-space:nowrap}
+.chip-btn{border:1.5px solid var(--gold);background:transparent;color:var(--ink);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:700;cursor:pointer;min-height:40px}
+.icon-btn{border:0;background:transparent;color:var(--muted);font-size:20px;width:44px;height:44px;border-radius:12px;cursor:pointer}
+.status{border:0;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800;letter-spacing:.04em;cursor:pointer;min-height:34px;white-space:nowrap}
+.st-idea{background:var(--gold-soft);color:#7a5a17}
+.st-bought{background:var(--berry-soft);color:var(--berry)}
+.st-wrapped{background:var(--pine-soft);color:var(--pine-2)}
+.st-given{background:var(--pine);color:#fff7e8}
+:root[data-theme="dark"] .st-idea, :root[data-theme="dark"] .st-bought, :root[data-theme="dark"] .st-wrapped{color:var(--ink)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .st-idea,:root:not([data-theme="light"]) .st-bought,:root:not([data-theme="light"]) .st-wrapped{color:var(--ink)} }
+.person{padding:16px 18px}
+.person .head{display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:20px;color:#fff;flex:none}
+.person .gifts{margin-top:8px}
+.check{width:28px;height:28px;border-radius:9px;border:2px solid var(--gold);background:transparent;cursor:pointer;flex:none;display:grid;place-items:center;color:#fff;font-size:16px}
+.check[aria-checked="true"]{background:var(--pine-2);border-color:var(--pine-2)}
+.done .t{text-decoration:line-through;color:var(--muted)}
+.month{font-family:var(--serif);font-size:15px;color:var(--berry);font-weight:700;margin:14px 0 2px;letter-spacing:.02em}
+.month:first-child{margin-top:0}
+.empty{color:var(--muted);font-size:15px;padding:6px 0}
+.note{background:var(--gold-soft);border-radius:14px;padding:14px;font-size:15px;margin-bottom:14px;display:flex;gap:12px;align-items:center}
+.muted{color:var(--muted)}
+.seg{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:transparent;border-radius:10px;padding:10px 6px;font-weight:700;cursor:pointer;min-height:42px;font-size:15px}
+.seg button[aria-pressed="true"]{background:var(--pine);color:#fff7e8}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.03em}
+.field input,.field select{width:100%;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:12px;font-size:17px;min-height:48px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt{margin-top:10px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--pine);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5;border-top:3px solid var(--gold)}
+nav.tabs .in{display:flex;max-width:480px;width:100%}
+nav.tabs button{flex:1;border:0;background:transparent;padding:10px 4px 12px;font-size:12px;font-weight:700;color:#cfdccf;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:58px}
+nav.tabs button svg{width:23px;height:23px}
+nav.tabs button[aria-current="page"]{color:var(--gold)}
+.scrim{position:fixed;inset:0;background:rgba(10,20,14,.45);display:none;z-index:20}.scrim.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:480px;background:var(--card);border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));z-index:21;transform:translateY(105%);transition:transform .22s ease;max-height:90vh;overflow:auto;border-top:4px solid var(--berry)}
+.sheet.on{transform:none}
+.sheet h3{margin:4px 0 14px;font-size:22px;font-family:var(--serif)}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--pine);color:#fff7e8;padding:12px 16px;border-radius:14px;font-size:15px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:30;display:flex;gap:14px;align-items:center;max-width:92vw;border:1px solid var(--gold)}
+.toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.toast button{background:transparent;border:0;color:var(--gold);font-weight:800;cursor:pointer;font-size:15px}
+.welcome{min-height:100vh;background:linear-gradient(180deg,var(--pine) 0%,#16301f 100%);color:#fff7e8;text-align:center;padding:max(40px,env(safe-area-inset-top)) 24px 40px;position:relative;overflow:hidden}
+.welcome .in{max-width:420px;margin:0 auto;position:relative;padding-top:8vh}
+.welcome h1{font-family:var(--serif);font-size:36px;margin:12px 0 8px}
+.welcome p{color:#e9dcc3;font-size:17px}
+.welcome .btn.ghost{color:#fff7e8;border-color:rgba(255,255,255,.35)}
+.tree{width:120px;height:140px;margin:0 auto}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<nav class="tabs" id="tabs" hidden><div class="in">
+  <button data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 15.4 6.7 18.4l1.2-6L3.4 8.3l6-.7z"/></svg>Home</button>
+  <button data-go="gifts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="18" height="12" rx="1.5"/><path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S10 9 12 9zM12 9c2-4 6-4 6-1.5S14 9 12 9z"/></svg>Gifts</button>
+  <button data-go="lists"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>To-do</button>
+  <button data-go="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>Settings</button>
+</div></nav>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" hidden>Undo</button></div>
+
+<script>
+"use strict";
+/* ============ Christmas Planner v1.0 · Working Student Series · personal use only ============ */
+const VERSION = '1.0', KEY = 'christmasplanner.v1';
+const STATUS = ['idea','bought','wrapped','given'];
+const ST_LABEL = {idea:'Idea', bought:'Bought', wrapped:'Wrapped', given:'Given'};
+const AVATAR = ['#a8262f','#2b5239','#c9973a','#7a3b69','#2f5d7c','#b5653f'];
+const TASKS = [
+ ['nov','Write the gift list: who, what, how much'],['nov','Set the total budget'],['nov','Order anything that ships from far away'],
+ ['nov','Plan where you spend the holidays'],['nov','Black Friday: only buy what is on the list'],
+ ['dec','Buy wrapping paper, tape and tags'],['dec','Write and send Christmas cards'],['dec','Buy the tree and decorations'],
+ ['dec','Plan the Christmas dinner menu'],['dec','Wrap all presents'],['dec','Food shopping for the holidays'],
+ ['week','Last gift check: anyone missing?'],['week','Charge batteries, phone and camera'],['week','Rest. You did it.']];
+const MONTHS = {nov:'November', dec:'December', week:'Christmas week'};
+
+/* ---------- dates ---------- */
+const pad = n => String(n).padStart(2,'0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+let NOW = () => new Date();
+const today = () => iso(NOW());
+function bigDay(){ const n = NOW(); const [m,d] = (S.settings.day||'12-25').split('-').map(Number);
+  let t = new Date(n.getFullYear(), m-1, d); const t0 = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  if (t < t0) t = new Date(n.getFullYear()+1, m-1, d); return Math.round((t - t0)/864e5); }
+
+/* ---------- state ---------- */
+const uid = () => Math.random().toString(36).slice(2,10);
+const blank = () => ({v:1, onboarded:false, people:[], tasks:[], cards:[], settings:{currency:'USD', budget:0, day:'12-25', theme:'auto', lastBackup:null}});
+let S;
+function load(){ try { const r = localStorage.getItem(KEY); S = r ? Object.assign(blank(), JSON.parse(r)) : blank(); } catch(e){ S = blank(); }
+  S.settings = Object.assign(blank().settings, S.settings||{}); }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ toast('Could not save on this device'); } }
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(String(v).replace(',','.')); return isFinite(n) ? n : NaN; };
+const r2 = x => Math.round(x*100)/100;
+function money(x, whole){ try { return new Intl.NumberFormat(undefined,{style:'currency',currency:S.settings.currency,maximumFractionDigits:whole?0:2,minimumFractionDigits:whole?0:2}).format(x); } catch(e){ return (whole?Math.round(x):x.toFixed(2)); } }
+const person = id => S.people.find(p=>p.id===id);
+const starterTasks = () => TASKS.map(([when,text])=>({id:uid(), when, text, done:false}));
+
+/* ---------- totals ---------- */
+function totals(){
+  let planned = 0, spent = 0, toBuy = 0, toWrap = 0, gifts = 0;
+  S.people.forEach(p => p.gifts.forEach(g => { gifts++; planned += g.price||0; if (g.status!=='idea') spent += g.price||0; if (g.status==='idea') toBuy++; if (g.status==='bought') toWrap++; }));
+  const assigned = S.people.reduce((a,p)=>a+(p.budget||0),0);
+  return {planned:r2(planned), spent:r2(spent), toBuy, toWrap, gifts, assigned, budget:S.settings.budget||0};
+}
+
+/* ---------- UI helpers ---------- */
+const $ = s => document.querySelector(s);
+let screen = 'home', undoFn = null, toastT = null;
+function toast(msg, undo){ $('#toastMsg').textContent = msg; undoFn = undo||null; $('#toastUndo').hidden = !undo; $('#toast').classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(()=>$('#toast').classList.remove('on'), undo?5000:2400); }
+$('#toastUndo').onclick = () => { if (undoFn){ undoFn(); undoFn=null; save(); render(); } $('#toast').classList.remove('on'); };
+function openSheet(html, f){ $('#sheet').innerHTML = html; $('#sheet').classList.add('on'); $('#scrim').classList.add('on'); setTimeout(()=>{ const el = f && $('#sheet '+f); if (el) el.focus(); },60); }
+function closeSheet(){ $('#sheet').classList.remove('on'); $('#scrim').classList.remove('on'); }
+$('#scrim').onclick = closeSheet;
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeSheet(); });
+
+function lightsSVG(){
+  const cols = ['#e8434c','#f2c14e','#5fbf7a','#5aa7e0','#f2c14e'];
+  let bulbs = ''; for (let i=0;i<16;i++){ const x = 15 + i*31, y = 12 + Math.sin(i*0.9)*5; bulbs += `<g transform="translate(${x},${y})"><rect x="-3" y="-3" width="6" height="5" rx="1" fill="#c9973a"/><ellipse cx="0" cy="8" rx="5.5" ry="8" fill="${cols[i%5]}" opacity=".95"/><ellipse cx="-1.8" cy="5" rx="1.6" ry="2.6" fill="#fff" opacity=".55"/></g>`; }
+  return `<svg class="lights" viewBox="0 0 500 34" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><path d="M0 8 Q 30 22 60 10 T 120 12 T 180 9 T 240 14 T 300 9 T 360 13 T 420 9 T 500 12" stroke="#0e1f15" stroke-width="2" fill="none"/>${bulbs}</svg>`;
+}
+function snowHTML(n){ let s=''; for (let i=0;i<n;i++){ const l = (i*37)%100, d = 6+((i*13)%7), dl = -((i*7)%9), sz = 3+(i%3); s += `<i style="left:${l}%;width:${sz}px;height:${sz}px;animation-duration:${d}s;animation-delay:${dl}s;opacity:${.4+(i%4)*.15}"></i>`; } return `<div class="snow" aria-hidden="true">${s}</div>`; }
+const TREE = `<svg class="tree" viewBox="0 0 120 140" aria-hidden="true"><path d="M60 8l8 14h-16z" fill="#f2c14e"/><path d="M60 18L28 66h14L22 98h18L12 128h96L80 98h18L78 66h14z" fill="#5fbf7a" opacity=".9"/><path d="M60 18L28 66h14L22 98h18L12 128h96L80 98h18L78 66h14z" fill="none" stroke="#2b5239" stroke-width="2"/><rect x="52" y="128" width="16" height="10" fill="#7a4a2a"/><circle cx="48" cy="58" r="4" fill="#e8434c"/><circle cx="72" cy="78" r="4" fill="#f2c14e"/><circle cx="44" cy="96" r="4" fill="#5aa7e0"/><circle cx="78" cy="110" r="4" fill="#e8434c"/><circle cx="58" cy="114" r="4" fill="#f2c14e"/></svg>`;
+
+function banner(kicker, title, sub){
+  return `<header class="banner">${lightsSVG()}${snowHTML(18)}<div class="in"><div class="kicker">${kicker}</div><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div></header>`;
+}
+
+/* ---------- screens ---------- */
+function vHome(){
+  const d = bigDay(), t = totals(), b = t.budget;
+  const pct = b>0 ? Math.min(100, t.spent/b*100) : 0, over = b>0 && t.planned > b;
+  const toBuy = []; S.people.forEach(p=>p.gifts.forEach(g=>{ if (g.status==='idea') toBuy.push({p,g}); }));
+  const nextTasks = S.tasks.filter(x=>!x.done).slice(0,3);
+  const needBackup = (t.gifts > 3) && (!S.settings.lastBackup || (Date.now() - new Date(S.settings.lastBackup)) > 14*864e5);
+  const dayName = S.settings.day==='12-24' ? 'Christmas Eve' : 'Christmas';
+  return banner('Christmas planner', greeting(), d===0?`It's ${dayName}! 🎄`:`${d} sleep${d===1?'':'s'} until ${dayName}`) + `<main class="app">
+  ${needBackup?`<div class="note"><div class="grow"><b>Save a backup?</b><br><span class="muted">Your lists live only on this device.</span></div><button class="mini" data-act="export">Back up</button></div>`:''}
+  <section class="card ribbon"><div class="count"><div class="bauble" id="daysLeft"><div><b>${d}</b><span>days</span></div></div>
+    <div class="txt">${t.toBuy?`${t.toBuy} gift${t.toBuy>1?'s':''} still to buy`:t.gifts?'All gifts bought ✨':'Start your gift list'}<small>${t.toWrap?`${t.toWrap} waiting to be wrapped · `:''}${S.people.length} ${S.people.length===1?'person':'people'} on your list</small></div></div></section>
+  <section class="card"><h2><span class="orn">✦</span> Gift budget</h2>
+    <div class="money"><div><div class="k">Budget</div><div class="v">${b?money(b,true):'—'}</div></div>
+      <div><div class="k">Spent</div><div class="v">${money(t.spent,true)}</div></div>
+      <div><div class="k">${over?'Over':'Left'}</div><div class="v ${over?'over':'left'}" id="budgetLeft">${b?money(Math.abs(b-t.planned),true):'—'}</div></div></div>
+    <div class="candy ${over?'over':''}"><i style="width:${pct.toFixed(1)}%"></i></div>
+    <div class="s">${b?`${money(t.planned,true)} planned incl. ideas${over?' — a bit over, swap one idea for something smaller':''}`:'<a href="#" data-act="setbudget">Set a total budget</a> to see what is left.'}</div></section>
+  <section class="card"><h2><span class="orn">✦</span> Still to buy</h2>
+    ${toBuy.length?`<ul class="list">${toBuy.slice(0,5).map(({p,g})=>`<li><div class="grow"><div class="t">${esc(g.idea)}</div><div class="s">for ${esc(p.name)}${g.price?` · ${money(g.price)}`:''}</div></div>
+      <button class="mini" data-act="bought" data-p="${p.id}" data-g="${g.id}">Bought ✓</button></li>`).join('')}</ul>
+      ${toBuy.length>5?`<div class="s mt">+ ${toBuy.length-5} more in Gifts</div>`:''}`
+    :`<div class="empty">${S.people.length?'Nothing left to buy. Time for cocoa.':'Add the people you buy for in Gifts.'}</div>`}
+  </section>
+  <section class="card"><h2><span class="orn">✦</span> Next on the list</h2>
+    ${nextTasks.length?`<ul class="list">${nextTasks.map(x=>`<li><button class="check" role="checkbox" aria-checked="false" data-act="task" data-id="${x.id}" aria-label="${esc(x.text)}"></button><div class="grow"><div class="t">${esc(x.text)}</div><div class="s">${MONTHS[x.when]||''}</div></div></li>`).join('')}</ul>`
+    :`<div class="empty">All done. Merry Christmas!</div>`}
+  </section></main>`;
+}
+function greeting(){ const h = NOW().getHours(); return h<12?'Good morning':h<18?'Good afternoon':'Good evening'; }
+
+function vGifts(){
+  const t = totals();
+  return banner('Gifts', 'Who gets what', `${t.gifts} gift${t.gifts===1?'':'s'} · ${money(t.planned,true)} planned`) + `<main class="app">
+  <button class="btn primary" data-act="addperson">+ Add a person</button><div class="mt"></div>
+  ${S.people.length?S.people.map((p,i)=>{ const sp = p.gifts.reduce((a,g)=>a+(g.price||0),0); const over = p.budget && sp > p.budget;
+    return `<section class="card person"><div class="head"><div class="avatar" style="background:${AVATAR[i%AVATAR.length]}">${esc((p.name[0]||'?').toUpperCase())}</div>
+      <div class="grow"><div class="t" style="font-family:var(--serif);font-size:19px">${esc(p.name)}</div><div class="s" style="${over?'color:var(--berry)':''}">${money(sp)}${p.budget?` of ${money(p.budget)}`:''}</div></div>
+      <button class="icon-btn" data-act="editperson" data-p="${p.id}" aria-label="Edit ${esc(p.name)}">✎</button></div>
+      <ul class="list gifts">${p.gifts.map(g=>`<li><div class="grow"><div class="t">${esc(g.idea)}</div><div class="s">${g.price?money(g.price):'no price yet'}</div></div>
+        <button class="status st-${g.status}" data-act="cycle" data-p="${p.id}" data-g="${g.id}" aria-label="Status: ${ST_LABEL[g.status]}. Tap to change">${ST_LABEL[g.status]}</button>
+        <button class="icon-btn" data-act="editgift" data-p="${p.id}" data-g="${g.id}" aria-label="Edit gift">✎</button></li>`).join('')}</ul>
+      <button class="mini mt" data-act="addgift" data-p="${p.id}">+ Gift idea</button></section>`; }).join('')
+  :`<section class="card"><div class="empty">Start with the people you buy for. Family, friends, the secret Santa at work.</div></section>`}
+  <p class="muted" style="font-size:14px">Tap a gift's label to move it along: Idea → Bought → Wrapped → Given.</p></main>`;
+}
+
+function vLists(){
+  const groups = ['nov','dec','week'].map(w=>[w, S.tasks.filter(x=>x.when===w)]).filter(([,l])=>l.length);
+  const own = S.tasks.filter(x=>!MONTHS[x.when]);
+  const sent = S.cards.filter(c=>c.sent).length;
+  return banner('To-do', 'Christmas, step by step', `${S.tasks.filter(x=>x.done).length} of ${S.tasks.length} done`) + `<main class="app">
+  <section class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><h2 style="margin:0"><span class="orn">✦</span> Checklist</h2><button class="chip-btn" data-act="addtask">+ Task</button></div>
+    ${[...groups, ...(own.length?[['own',own]]:[])].map(([w,l])=>`<div class="month">${MONTHS[w]||'My tasks'}</div><ul class="list">${l.map(x=>`
+      <li class="${x.done?'done':''}"><button class="check" role="checkbox" aria-checked="${x.done}" data-act="task" data-id="${x.id}" aria-label="${esc(x.text)}">${x.done?'✓':''}</button><div class="grow"><div class="t">${esc(x.text)}</div></div>
+      <button class="icon-btn" data-act="deltask" data-id="${x.id}" aria-label="Delete">×</button></li>`).join('')}</ul>`).join('') || '<div class="empty">No tasks. Add your own or load the starter list in Settings.</div>'}
+  </section>
+  <section class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><h2 style="margin:0"><span class="orn">✦</span> Christmas cards</h2><button class="chip-btn" data-act="addcard">+ Name</button></div>
+    ${S.cards.length?`<div class="s">${sent} of ${S.cards.length} sent</div><ul class="list">${S.cards.map(c=>`<li class="${c.sent?'done':''}"><button class="check" role="checkbox" aria-checked="${c.sent}" data-act="card" data-id="${c.id}" aria-label="${esc(c.name)} sent">${c.sent?'✓':''}</button>
+      <div class="grow"><div class="t">${esc(c.name)}</div></div><button class="icon-btn" data-act="delcard" data-id="${c.id}" aria-label="Delete">×</button></li>`).join('')}</ul>`
+    :'<div class="empty">Who gets a card this year? Tick them off as you send them.</div>'}
+  </section></main>`;
+}
+
+function vSettings(){
+  const s = S.settings;
+  const cur = ['USD','EUR','GBP','CAD','AUD','NZD','CHF','SEK','NOK','DKK','PLN'];
+  return banner('Settings', 'Make it yours', `Christmas Planner v${VERSION}`) + `<main class="app">
+  <section class="card"><h2><span class="orn">✦</span> Budget & day</h2>
+    <div class="field"><label>Total gift budget</label><input id="setBudget" inputmode="decimal" value="${s.budget||''}" placeholder="e.g. 600"></div>
+    <div class="field"><label>The big day</label><div class="seg" id="setDay"><button type="button" data-v="12-24" aria-pressed="${s.day==='12-24'}">Dec 24</button><button type="button" data-v="12-25" aria-pressed="${s.day!=='12-24'}">Dec 25</button></div></div>
+    <div class="field"><label>Currency</label><select id="setCur">${cur.map(c=>`<option ${s.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    <button class="btn green" data-act="savesettings">Save</button></section>
+  <section class="card"><h2><span class="orn">✦</span> Look</h2><div class="seg">${['auto','light','dark'].map(t=>`<button data-act="theme" data-v="${t}" aria-pressed="${s.theme===t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}</div></section>
+  <section class="card"><h2><span class="orn">✦</span> Backup</h2>
+    <p class="muted" style="margin-top:0;font-size:15px">Your lists are stored only on this device. Nothing is sent anywhere, so no one can peek at their presents. Download a backup now and then.</p>
+    <div class="row2"><button class="btn green" style="font-size:15px;min-height:46px" data-act="export">Download backup</button>
+    <label class="btn ghost" style="cursor:pointer;font-size:15px;min-height:46px">Restore<input type="file" accept=".json,application/json" id="importFile" hidden></label></div></section>
+  <section class="card"><h2><span class="orn">✦</span> Starter checklist</h2><p class="muted" style="margin-top:0;font-size:15px">Add the ${TASKS.length} classic Christmas to-dos again (only the missing ones).</p><button class="btn ghost" data-act="addstarter">Add starter checklist</button></section>
+  <button class="btn ghost" data-act="reset">Erase all data on this device</button>
+  <p class="muted" style="font-size:12px;text-align:center">Christmas Planner · Working Student Series · for personal use only</p></main>`;
+}
+
+function vWelcome(){
+  return `<div class="welcome">${snowHTML(40)}<div class="in">${TREE}<div class="kicker" style="margin-top:14px">Christmas planner</div><h1>A calm, merry Christmas.</h1>
+  <p>Every gift, every budget, every to-do in one cozy place. No spreadsheets, no last-minute panic.</p>
+  <button class="btn primary mt" data-act="start" style="margin-top:22px">Start my Christmas list</button>
+  <button class="btn ghost mt" data-act="demo">Look around with an example</button>
+  <p style="font-size:13px;margin-top:22px;opacity:.75">Private by design: no account, no cloud. Nobody can peek at their presents.</p></div></div>`;
+}
+
+/* ---------- render ---------- */
+function applyTheme(){ const t = S.settings.theme; if (t==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme',t); }
+function render(){
+  applyTheme();
+  if (!S.onboarded){ $('#tabs').hidden = true; $('#root').innerHTML = vWelcome(); return; }
+  $('#tabs').hidden = false;
+  $('#root').innerHTML = ({home:vHome, gifts:vGifts, lists:vLists, settings:vSettings})[screen]();
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current', b.dataset.go===screen?'page':'false'));
+  const f = $('#importFile'); if (f) f.onchange = importFile;
+}
+function go(s){ screen = s; location.hash = s; render(); window.scrollTo(0,0); }
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ---------- sheets ---------- */
+function personSheet(p){
+  p = p || {name:'', budget:''};
+  openSheet(`<h3>${p.id?'Edit person':'Who are you buying for?'}</h3>
+    <div class="field"><label>Name</label><input id="pName" value="${esc(p.name)}" placeholder="e.g. Mom" maxlength="30"></div>
+    <div class="field"><label>Budget for this person (optional)</label><input id="pBudget" inputmode="decimal" value="${p.budget||''}" placeholder="e.g. 50"></div>
+    <button class="btn primary" data-act="person-save" data-p="${p.id||''}">Save</button>
+    ${p.id?`<button class="btn ghost mt" data-act="person-del" data-p="${p.id}">Remove ${esc(p.name)}</button>`:''}`, p.id?null:'#pName');
+}
+function giftSheet(p, g){
+  g = g || {idea:'', price:'', status:'idea'};
+  openSheet(`<h3>${g.id?'Edit gift':'Gift for '+esc(p.name)}</h3>
+    <div class="field"><label>Gift idea</label><input id="gIdea" value="${esc(g.idea)}" placeholder="e.g. Cozy socks" maxlength="50"></div>
+    <div class="field"><label>Price (estimate is fine)</label><input id="gPrice" inputmode="decimal" value="${g.price||''}" placeholder="0"></div>
+    <div class="field"><label>Status</label><div class="seg" id="gStatus">${STATUS.map(s=>`<button type="button" data-v="${s}" aria-pressed="${g.status===s}">${ST_LABEL[s]}</button>`).join('')}</div></div>
+    <button class="btn primary" data-act="gift-save" data-p="${p.id}" data-g="${g.id||''}">Save</button>
+    ${g.id?`<button class="btn ghost mt" data-act="gift-del" data-p="${p.id}" data-g="${g.id}">Delete gift</button>`:''}`, g.id?null:'#gIdea');
+}
+function textSheet(title, act, ph){ openSheet(`<h3>${title}</h3><div class="field"><input id="xText" placeholder="${ph}" maxlength="60"></div><button class="btn primary" data-act="${act}">Add</button>`, '#xText'); }
+
+/* ---------- demo ---------- */
+function loadDemo(){
+  S = blank(); S.onboarded = true; Object.assign(S.settings,{currency:'USD', budget:600, lastBackup:today()});
+  const P = (name,budget,gifts)=>({id:uid(), name, budget, gifts:gifts.map(([idea,price,status])=>({id:uid(),idea,price,status}))});
+  S.people = [P('Mom',120,[['Cashmere scarf',65,'wrapped'],['Photo book of 2026',38,'bought']]),
+    P('Dad',100,[['Coffee grinder',79,'idea'],['Wool socks',14,'bought']]),
+    P('Lena',60,[['Board game',42,'idea'],['Bath bombs',12,'idea']]),
+    P('Grandma',50,[['Framed family photo',30,'given']]),
+    P('Secret Santa',25,[['Mini plant',18,'idea']])];
+  S.tasks = starterTasks(); S.tasks.slice(0,3).forEach(x=>x.done=true);
+  S.cards = ['Aunt Julia','The Millers','Uncle Tom','Ms. Park (neighbor)'].map((n,i)=>({id:uid(), name:n, sent:i<2}));
+}
+
+/* ---------- backup ---------- */
+function exportData(){
+  S.settings.lastBackup = today(); save();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+  a.download = `christmas-planner-backup-${today()}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500);
+  toast('Backup downloaded'); render();
+}
+function importFile(e){
+  const f = e.target.files[0]; if (!f) return; const rd = new FileReader();
+  rd.onload = () => { try { const d = JSON.parse(rd.result); if (!d || !Array.isArray(d.people) || !Array.isArray(d.tasks)) throw 0;
+      if (!confirm('Replace the data on this device with this backup?')) return;
+      S = Object.assign(blank(), d); S.settings = Object.assign(blank().settings, d.settings||{}); S.onboarded = true; save(); toast('Backup restored'); go('home');
+    } catch(err){ toast('That file is not a Christmas Planner backup'); } };
+  rd.readAsText(f);
+}
+
+/* ---------- actions ---------- */
+document.addEventListener('click', e => {
+  const seg = e.target.closest('#gStatus [data-v], #setDay [data-v]'); if (seg){ seg.parentElement.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed', b===seg)); return; }
+  const el = e.target.closest('[data-act]'); if (!el || el.tagName==='INPUT') return;
+  if (el.tagName==='A') e.preventDefault();
+  const act = el.dataset.act, p = el.dataset.p && person(el.dataset.p), gid = el.dataset.g, id = el.dataset.id;
+  const gift = p && gid ? p.gifts.find(x=>x.id===gid) : null;
+  switch(act){
+    case 'start': S.onboarded = true; S.tasks = starterTasks(); save(); go('gifts'); personSheet(); break;
+    case 'demo': loadDemo(); save(); go('home'); toast('Example loaded. Erase it in Settings.'); break;
+    case 'setbudget': go('settings'); setTimeout(()=>$('#setBudget')?.focus(),50); break;
+    case 'addperson': personSheet(); break;
+    case 'editperson': personSheet(p); break;
+    case 'person-save': { const name = $('#pName').value.trim(); if (!name){ toast('Add a name'); return; } const b = num($('#pBudget').value);
+      if (p) Object.assign(p,{name, budget:isNaN(b)?0:Math.max(0,r2(b))}); else S.people.push({id:uid(), name, budget:isNaN(b)?0:Math.max(0,r2(b)), gifts:[]});
+      save(); closeSheet(); render(); if (!p){ const np = S.people[S.people.length-1]; toast(`${name} added. Now a gift idea?`); giftSheet(np); } break; }
+    case 'person-del': { const idx = S.people.indexOf(p); S.people.splice(idx,1); save(); closeSheet(); render(); toast(`${p.name} removed`, ()=>{ S.people.splice(idx,0,p); }); break; }
+    case 'addgift': giftSheet(p); break;
+    case 'editgift': giftSheet(p, gift); break;
+    case 'gift-save': { const idea = $('#gIdea').value.trim(); if (!idea){ toast('What is the gift?'); return; } const pr = num($('#gPrice').value);
+      const status = $('#gStatus [aria-pressed="true"]')?.dataset.v || 'idea';
+      if (gift) Object.assign(gift,{idea, price:isNaN(pr)?0:Math.max(0,r2(pr)), status}); else p.gifts.push({id:uid(), idea, price:isNaN(pr)?0:Math.max(0,r2(pr)), status});
+      save(); closeSheet(); render(); toast('Gift saved 🎁'); break; }
+    case 'gift-del': { const idx = p.gifts.indexOf(gift); p.gifts.splice(idx,1); save(); closeSheet(); render(); toast('Gift deleted', ()=>{ p.gifts.splice(idx,0,gift); }); break; }
+    case 'cycle': { const prev = gift.status; gift.status = STATUS[(STATUS.indexOf(prev)+1)%STATUS.length]; save(); render();
+      toast(`${gift.idea}: ${ST_LABEL[gift.status]}`, ()=>{ gift.status = prev; }); break; }
+    case 'bought': { gift.status = 'bought'; save(); render(); toast(`Bought for ${p.name} ✓`, ()=>{ gift.status = 'idea'; }); break; }
+    case 'task': { const x = S.tasks.find(t=>t.id===id); x.done = !x.done; save(); render(); if (x.done) toast('Done ✓', ()=>{ x.done = false; }); break; }
+    case 'deltask': { const i = S.tasks.findIndex(t=>t.id===id), x = S.tasks[i]; S.tasks.splice(i,1); save(); render(); toast('Task removed', ()=>{ S.tasks.splice(i,0,x); }); break; }
+    case 'addtask': textSheet('New task','task-save','e.g. Book the restaurant'); break;
+    case 'task-save': { const t = $('#xText').value.trim(); if (!t) return; S.tasks.push({id:uid(), when:'own', text:t, done:false}); save(); closeSheet(); render(); break; }
+    case 'addcard': textSheet('Card for…','card-save','e.g. Aunt Julia'); break;
+    case 'card-save': { const t = $('#xText').value.trim(); if (!t) return; S.cards.push({id:uid(), name:t, sent:false}); save(); closeSheet(); render(); break; }
+    case 'card': { const c = S.cards.find(x=>x.id===id); c.sent = !c.sent; save(); render(); break; }
+    case 'delcard': S.cards = S.cards.filter(x=>x.id!==id); save(); render(); break;
+    case 'savesettings': { const b = num($('#setBudget').value); S.settings.budget = isNaN(b)?0:Math.max(0,r2(b));
+      S.settings.day = $('#setDay [aria-pressed="true"]')?.dataset.v || '12-25'; S.settings.currency = $('#setCur').value; save(); render(); toast('Saved'); break; }
+    case 'theme': S.settings.theme = el.dataset.v; save(); render(); break;
+    case 'export': exportData(); break;
+    case 'addstarter': { const have = new Set(S.tasks.map(t=>t.text)); const add = starterTasks().filter(t=>!have.has(t.text)); S.tasks.push(...add); save(); render(); toast(add.length?`${add.length} tasks added`:'You have them all'); break; }
+    case 'reset': if (confirm('Erase everything on this device? Download a backup first if unsure.')){ localStorage.removeItem(KEY); S = blank(); render(); } break;
+  }
+});
+document.addEventListener('keydown', e => { if (e.key==='Enter' && e.target.matches('#sheet input:not([type=file])')){ const b = $('#sheet .btn.primary'); if (b) b.click(); }});
+
+/* ---------- installable/offline when hosted ---------- */
+if (location.protocol === 'https:' || location.hostname === 'localhost'){
+  const l = document.createElement('link'); l.rel = 'manifest'; l.href = 'manifest.webmanifest'; document.head.appendChild(l);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+/* ---------- boot ---------- */
+load();
+const h = location.hash.replace('#','');
+if (['home','gifts','lists','settings'].includes(h)) screen = h;
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+render(); window.scrollTo(0,0);
+</script>
+</body>
+</html>
